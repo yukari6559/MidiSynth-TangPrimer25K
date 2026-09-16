@@ -480,3 +480,6 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+
+# Cursor local rules / agent state (match CsharpHdl)
+.cursor/
