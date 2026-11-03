@@ -7,9 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="SharpHdl.Core" Version="0.3.2" />
-    <PackageReference Include="SharpHdl.Emit" Version="0.3.2" />
-    <PackageReference Include="SharpHdl.Sim" Version="0.3.2" />
+    <PackageReference Include="SharpHdl.Core" Version="0.11.0" />
+    <PackageReference Include="SharpHdl.Emit" Version="0.11.0" />
+    <PackageReference Include="SharpHdl.Sim" Version="0.11.0" />
   </ItemGroup>
 
 </Project>
