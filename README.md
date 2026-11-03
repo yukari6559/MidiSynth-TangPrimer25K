@@ -6,9 +6,9 @@ SharpHdl は **NuGet 参照のみ**（ソース同梱なし）。回路・ボー
 
 ## 依存
 
-- [SharpHdl.Core](https://www.nuget.org/packages/SharpHdl.Core) `0.3.2`
-- [SharpHdl.Emit](https://www.nuget.org/packages/SharpHdl.Emit) `0.3.2`
-- [SharpHdl.Sim](https://www.nuget.org/packages/SharpHdl.Sim) `0.3.2`
+- [SharpHdl.Core](https://www.nuget.org/packages/SharpHdl.Core) `0.11.0`
+- [SharpHdl.Emit](https://www.nuget.org/packages/SharpHdl.Emit) `0.11.0`
+- [SharpHdl.Sim](https://www.nuget.org/packages/SharpHdl.Sim) `0.11.0`
 
 ```bash
 dotnet restore
