@@ -48,8 +48,8 @@ public class SquareWaveTests
 	{
 		List<Signal> ports = [.. new SquareOscillator(16).GetPorts()];
 
-		Assert.Equal(["clk", "rst", "tick", "increment", "square"], ports.Select(p => p.Name));
-		Assert.Equal([1u, 1u, 1u, 16u, 1u], ports.Select(p => p.Width));
+		Assert.Equal(["clk", "rst", "tick", "increment", "gate", "square"], ports.Select(p => p.Name));
+		Assert.Equal([1u, 1u, 1u, 16u, 1u, 1u], ports.Select(p => p.Width));
 	}
 
 	[Fact]
@@ -120,10 +120,53 @@ public class SquareWaveTests
 		Assert.Equal("phaseWidth", ex.ParamName);
 	}
 
+	[Fact]
+	public void GateOffKeepsSquareAndPhaseAtZero()
+	{
+		SimSession<SquareOscillator> s = StartOscillator(8, increment: 16);
+		s.Set(s.Module.Gate, 0);
+
+		List<int> square = Run(s, 64, tick: 1);
+
+		Assert.All(square, v => Assert.Equal(0, v));
+		Assert.Equal(0u, s.Get(s.Module.Phase));
+	}
+
+	[Fact]
+	public void SquareIsZeroRightAfterGateOff()
+	{
+		SimSession<SquareOscillator> s = StartOscillator(8, increment: 16);
+		Run(s, 10, tick: 1);
+		Assert.Equal(1u, s.Get(s.Module.Square));
+
+		s.Set(s.Module.Gate, 0);
+		s.Settle();
+		Assert.Equal(0u, s.Get(s.Module.Square));
+
+		List<int> square = Run(s, 32, tick: 1);
+		Assert.All(square, v => Assert.Equal(0, v));
+		Assert.Equal(0u, s.Get(s.Module.Phase));
+	}
+
+	[Fact]
+	public void EveryNoteStartsFromPhaseZero()
+	{
+		SimSession<SquareOscillator> s = StartOscillator(8, increment: 16);
+		List<int> first = Run(s, 20, tick: 1);
+
+		s.Set(s.Module.Gate, 0);
+		Run(s, 5, tick: 1);
+		s.Set(s.Module.Gate, 1);
+		List<int> second = Run(s, 20, tick: 1);
+
+		Assert.Equal(first, second);
+	}
+
 	private static SimSession<SquareOscillator> StartOscillator(uint phaseWidth, ulong increment)
 	{
 		SimSession<SquareOscillator> s = new SquareOscillator(phaseWidth).Run();
 		s.Set(s.Module.Increment, increment);
+		s.Set(s.Module.Gate, 1);
 		s.Set(s.Module.Tick, 0);
 		s.Set(s.Module.Rst, 1);
 		s.Advance(s.Module.Clk);

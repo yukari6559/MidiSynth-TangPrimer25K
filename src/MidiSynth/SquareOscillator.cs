@@ -3,8 +3,9 @@ using SharpHdl.Core.Model;
 namespace MidiSynth;
 
 /// <summary>
-/// 位相から矩形波を出す回路。<see cref="Tick"/> のクロックごとに <see cref="Phase"/> へ <see cref="Increment"/> を足し、
+/// 位相から矩形波を出す回路。<see cref="Gate"/> が 1 のあいだ、<see cref="Tick"/> のクロックごとに <see cref="Phase"/> へ <see cref="Increment"/> を足し、
 /// <see cref="Phase"/> の最上位ビットを <see cref="Square"/> に出す。位相の 1 周の前半が 0、後半が 1 なので、デューティは 50%。
+/// <see cref="Gate"/> が 0 のあいだは <see cref="Square"/> を 0 にし、<see cref="Phase"/> を 0 に止める。どの音も位相 0 から鳴り始める。
 /// </summary>
 public sealed class SquareOscillator : Module
 {
@@ -20,10 +21,13 @@ public sealed class SquareOscillator : Module
 	/// <summary>1 サンプルごとに位相へ足す数。<see cref="PhaseIncrementTable.Increment"/> をつなぐ。</summary>
 	public In Increment { get; }
 
-	/// <summary>矩形波。<see cref="Phase"/> の最上位ビット。</summary>
+	/// <summary>鍵盤を押しているあいだ 1。<see cref="NoteParser.Gate"/> をつなぐ。</summary>
+	public In Gate { get; } = In.UInt(1, "gate");
+
+	/// <summary>矩形波。<see cref="Gate"/> が 1 のときは <see cref="Phase"/> の最上位ビット、0 のときは 0。</summary>
 	public Out Square { get; } = Out.UInt(1, "square");
 
-	/// <summary>今の位相。<see cref="PhaseWidth"/> ビットで 1 周する。</summary>
+	/// <summary>今の位相。<see cref="PhaseWidth"/> ビットで 1 周する。<see cref="Gate"/> が 0 のあいだは 0。</summary>
 	public Reg Phase { get; }
 
 	/// <summary>位相と <see cref="Increment"/> の幅。</summary>
@@ -41,16 +45,18 @@ public sealed class SquareOscillator : Module
 		PhaseWidth = phaseWidth;
 		Increment = In.UInt(phaseWidth, "increment");
 		Phase = Reg.UInt(phaseWidth, "phase");
-		SetPorts([Clk, Rst, Tick, Increment, Square]);
+		SetPorts([Clk, Rst, Tick, Increment, Gate, Square]);
 		SetLocal(Phase);
 	}
 
-	/// <summary>位相を進め、最上位ビットを出す回路を描く。</summary>
+	/// <summary>鍵盤を押しているあいだ位相を進め、最上位ビットを出す回路を描く。</summary>
 	public override void Describe()
 	{
-		Expr nextPhase = Tick.Eq(Lit.Bits(1, 1)).Mux(Phase + Increment, Phase);
+		Expr gateOn = Gate.Eq(Lit.Bits(1, 1));
+		Expr advanced = Tick.Eq(Lit.Bits(1, 1)).Mux(Phase + Increment, Phase);
+		Expr nextPhase = gateOn.Mux(advanced, Lit.Bits(PhaseWidth, 0));
 
 		Seq(Clk, Rst, () => Phase.Assign(0, nextPhase));
-		Comb(() => Square.Assign(Phase.Slice(PhaseWidth - 1, PhaseWidth - 1)));
+		Comb(() => Square.Assign(gateOn.LogicAnd(Phase.Slice(PhaseWidth - 1, PhaseWidth - 1))));
 	}
 }
