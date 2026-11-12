@@ -38,6 +38,24 @@ dotnet run --project src/MidiSynth.Emit
 
 `build/TangPrimer25KTop.v` ができます。`build/` は Git に入れません。
 
+## ビットストリームと書き込み
+
+```bash
+make bitstream   # Verilog の書き出し → 合成 → 配置配線 → build/TangPrimer25KTop.fs
+make load        # Dock の USB-C から FPGA の SRAM に書く（電源を切ると消える）
+```
+
+使うツールは Gowin IDE ではなく、オープンソースのものです。
+
+| 段階 | ツール | Makefile の変数 |
+|------|--------|-----------------|
+| 合成 | Homebrew の `yowasp-yosys`（`synth_gowin -family gw5a`） | `YOSYS` |
+| 配置配線 | nextpnr-himbaechel 0.11.1（`GW5A-25A` だけでビルド） | `NEXTPNR` |
+| ビットストリーム | Apicula 0.34 の `gowin_pack` | `GOWIN_PACK` |
+| 書き込み | `openFPGALoader -b tangprimer25k` | `LOADER` |
+
+`NEXTPNR` と `GOWIN_PACK` の既定は `~/Projects/tang25k-blink` の中にあるものです。別の場所にあるときは `make bitstream TOOLCHAIN=/path/to/tang25k-blink` のように渡します。
+
 ## 目標
 
 - MIDI 入力 → 音源 → Tang Primer 25K で音声出力するデモ
