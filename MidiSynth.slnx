@@ -1,5 +1,6 @@
 <Solution>
   <Folder Name="/src/">
+    <Project Path="src/MidiSynth.Emit/MidiSynth.Emit.csproj" />
     <Project Path="src/MidiSynth.Tests/MidiSynth.Tests.csproj" />
     <Project Path="src/MidiSynth/MidiSynth.csproj" />
   </Folder>
