@@ -23,6 +23,7 @@ dotnet test
 - `src/MidiSynth/PhaseIncrementTable.cs` — ノート番号から位相増分を引く表（平均律、A4 = 440 Hz。サンプル周波数と位相の幅はコンストラクタで決める）
 - `src/MidiSynth/SampleTicker.cs` — クロックを数え、サンプル周波数の合図（tick）を出す回路
 - `src/MidiSynth/SquareOscillator.cs` — gate が 1 のあいだ、tick ごとに位相へ増分を足し、位相の最上位ビットを矩形波（デューティ 50%）として出す回路。gate が 0 なら出力は 0
+- `src/MidiSynth/MonoSynth.cs` — 上の回路をつないだ単音シンセ。MIDI の受信線（`midi_rx`）から 1 ビットの音声（`audio`）を出す
 - `src/MidiSynth.Tests` — SharpHdl.Sim で回路を動かすテスト
 
 ## 目標
