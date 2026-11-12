@@ -39,6 +39,9 @@ public sealed class MonoSynth : Module
 	/// <summary>音声の 1 ビット出力。鍵盤を押しているあいだ矩形波、それ以外は 0。</summary>
 	public Out Audio { get; } = Out.UInt(1, "audio");
 
+	/// <summary>鍵盤を押しているあいだ 1。実機で、UART と Note On の解釈まで届いているかを LED で見るための出力。</summary>
+	public Out Playing { get; } = Out.UInt(1, "playing");
+
 	/// <summary><see cref="MidiRx"/> を 1 クロック遅らせた値。リセットでは空きの 1。</summary>
 	public Reg RxSync1 { get; } = Reg.UInt(1, "rx_sync1");
 
@@ -101,7 +104,7 @@ public sealed class MonoSynth : Module
 		Oscillator = new SquareOscillator(phaseWidth);
 		Increment = Wire.UInt(phaseWidth, "increment");
 
-		SetPorts([Clk, Rst, MidiRx, Audio]);
+		SetPorts([Clk, Rst, MidiRx, Audio, Playing]);
 		SetLocals([RxSync1, RxSync2, UartData, UartValid, Note, Gate, Increment, Tick]);
 	}
 
@@ -113,6 +116,7 @@ public sealed class MonoSynth : Module
 			RxSync1.Assign(1, MidiRx);
 			RxSync2.Assign(1, RxSync1);
 		});
+		Comb(() => Playing.Assign(Gate));
 
 		Uart.Describe();
 		Parser.Describe();

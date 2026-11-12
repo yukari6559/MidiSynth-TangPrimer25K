@@ -15,8 +15,22 @@ public class MonoSynthTests
 	{
 		List<Signal> ports = [.. new MonoSynth(ClockHz, ClocksPerSample, PhaseWidth).GetPorts()];
 
-		Assert.Equal(["clk", "rst", "midi_rx", "audio"], ports.Select(p => p.Name));
-		Assert.Equal([1u, 1u, 1u, 1u], ports.Select(p => p.Width));
+		Assert.Equal(["clk", "rst", "midi_rx", "audio", "playing"], ports.Select(p => p.Name));
+		Assert.Equal([1u, 1u, 1u, 1u, 1u], ports.Select(p => p.Width));
+	}
+
+	[Fact]
+	public void PlayingIsHighOnlyWhileTheNoteIsHeld()
+	{
+		SimSession<MonoSynth> s = Start();
+
+		Play(s, Uart(0x90, 0x45, 0x64));
+		Play(s, Idle(ClocksPerBit));
+		Assert.Equal(1u, s.Get(s.Module.Playing));
+
+		Play(s, Uart(0x80, 0x45, 0x00));
+		Play(s, Idle(ClocksPerBit));
+		Assert.Equal(0u, s.Get(s.Module.Playing));
 	}
 
 	[Fact]

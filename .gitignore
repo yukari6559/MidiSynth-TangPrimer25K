@@ -483,3 +483,9 @@ $RECYCLE.BIN/
 
 # Cursor local rules / agent state (match CsharpHdl)
 .cursor/
+
+# Verilog and bitstreams from make
+/build/
+
+# Verilog and bitstreams from make
+/build/
