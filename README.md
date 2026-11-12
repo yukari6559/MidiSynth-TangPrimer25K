@@ -13,7 +13,13 @@ SharpHdl は **NuGet 参照のみ**（ソース同梱なし）。回路・ボー
 ```bash
 dotnet restore
 dotnet build
+dotnet test
 ```
+
+## 構成
+
+- `src/MidiSynth/UartRx.cs` — MIDI の UART（31250 baud、8 ビット、パリティなし、ストップ 1 ビット）から 1 バイトずつ受け取る回路
+- `src/MidiSynth.Tests` — SharpHdl.Sim で回路を動かすテスト
 
 ## 目標
 
