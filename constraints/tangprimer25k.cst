@@ -1,0 +1,22 @@
+// Tang Primer 25K + Dock のピン割り当て（TangPrimer25KTop）
+//
+// clk     : オンボード 50 MHz（E2）
+// midi_rx : MIDI の受信線（PMOD の L11）。何もつながないとき空きの 1 になるよう内部プルアップ
+// audio   : 1 ビットの音声（PMOD の K5）。直列抵抗を挟んでイヤホンかアンプへ
+// led     : 鍵盤を押しているあいだ変わる（コア基板の READY LED、E8）
+//
+// L11 と K5 は同じ PMOD にある。Dock の裏面に FPGA のピン番号が印刷されているので、その表示で穴を探す。
+// 同じ PMOD の GND（5 番か 11 番）を、MIDI の入力側と音声の出力側の両方の GND につなぐ。
+// E2 と E8 は専用ピンを兼ねるので、gowin_pack に --cpu_as_gpio と --ready_as_gpio を付ける。
+
+IO_LOC "clk" E2;
+IO_PORT "clk" IO_TYPE=LVCMOS33 PULL_MODE=DOWN DRIVE=OFF BANK_VCCIO=3.3;
+
+IO_LOC "midi_rx" L11;
+IO_PORT "midi_rx" IO_TYPE=LVCMOS33 PULL_MODE=UP DRIVE=OFF BANK_VCCIO=3.3;
+
+IO_LOC "audio" K5;
+IO_PORT "audio" IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=8 BANK_VCCIO=3.3;
+
+IO_LOC "led" E8;
+IO_PORT "led" IO_TYPE=LVCMOS33 PULL_MODE=NONE DRIVE=8 BANK_VCCIO=3.3;
