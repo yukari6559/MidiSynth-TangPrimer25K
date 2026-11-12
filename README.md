@@ -27,6 +27,7 @@ dotnet test
 - `src/MidiSynth/PowerOnReset.cs` — 電源投入の直後だけリセットを出す回路
 - `src/MidiSynth/TangPrimer25KTop.cs` — Tang Primer 25K に書くトップ。端子は `clk`（50 MHz）、`midi_rx`、`audio`、`led`。PLL なし、MIDI の 1 ビットは 1600 クロック、サンプル周波数は 48828.125 Hz
 - `src/MidiSynth.Emit` — トップの Verilog を書き出すコマンド
+- `constraints/tangprimer25k.cst` — ピン割り当て。`clk` は E2、`midi_rx` は PMOD の L11、`audio` は同じ PMOD の K5、`led` は READY LED（E8）
 - `src/MidiSynth.Tests` — SharpHdl.Sim で回路を動かすテスト
 
 ## Verilog の書き出し
