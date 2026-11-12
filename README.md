@@ -19,6 +19,7 @@ dotnet test
 ## 構成
 
 - `src/MidiSynth/UartRx.cs` — MIDI の UART（31250 baud、8 ビット、パリティなし、ストップ 1 ビット）から 1 バイトずつ受け取る回路
+- `src/MidiSynth/NoteParser.cs` — MIDI のバイト列から、チャンネル 1 の Note On / Note Off を 1 音分のノート番号とゲートにする回路
 - `src/MidiSynth.Tests` — SharpHdl.Sim で回路を動かすテスト
 
 ## 目標
